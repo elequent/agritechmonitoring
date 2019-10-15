@@ -1,359 +1,110 @@
-
- 
-            var allText;
-            function readTextFile(file)
-            {
-                var rawFile = new XMLHttpRequest();
-                rawFile.open("GET", file, false);
-                rawFile.onreadystatechange = function ()
-                {
-                    if(rawFile.readyState === 4)
-                    {
-                        if(rawFile.status === 200 || rawFile.status == 0)
-                        {
-                            allText = rawFile.responseText;             
-                        }
-                    }
-                }
-                rawFile.send(null);
-            }
-            var namesSMI = ['SM30', 'SM40', 'SM50', 'SM60', 'SM70', 'SM80', 'SM90', 'SM100']; 
-            function readlongdata(start)
-            {
-                var t1 = allText.split("\n");
-                
-                var array = [];
-                for (var i=0;i<t1.length;i++)
-                {
-                    array[i] = t1[i].split(",");
-                }                
-                var length = array.length;          
-                var d = [];
-                for (var i=0;i<8;i++)
-                {
-                    d[i] = [];
-                    if (start == 0)
-                    {
-                        for (var j=0;j<length-1;j++)
-                        {
-                            if (array[j][0] != "")
-                            {
-                                var parts = array[j][0].split('/');
-                                var parts1 = array[j][1].split(':'); 
-                                var x = Date.UTC(parts[2], parts[1]-1, parts[0],parts1[0],parts1[1]);
-                                var y = Number(array[j][i+2]);
-                                d[i].push([x,y]);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (var j=length-1-2880;j<length-1;j++)
-                        {
-                            if (array[j][0] != "")
-                            {
-                                var parts = array[j][0].split('/');
-                                var parts1 = array[j][1].split(':'); 
-                                var x = Date.UTC(parts[2], parts[1]-1, parts[0],parts1[0],parts1[1]);
-                                var y = Number(array[j][i+2]);
-                                d[i].push([x,y]);
-                            }
-                        }
-                    }
-
-                }
-                var temparray = [];
-                  
-                for (var i=0;i<8;i++)
-                {
-                    temparray[i] = {
-                        name: namesSMI[i],
-                        data: d[i]
-                    };                
-                }                
-                return temparray;   
-            }
-
-            function readdata(start)
-            {
-                var t1 = allText.split("\n");
-                var array = [];
-                for (var i=0;i<t1.length;i++)
-                {
-                    array[i] = t1[i].split(",");
-                }                
-                var length = array.length;
-                var d = [];
-                var cumrain = 0;	
-
-                if (start == 0)
-                {
-                    for(var i=0;i<length-1;i++)
-                    {
-                        var parts = array[i][0].split('/');
-                        var parts1 = array[i][1].split(':');
-                        if (parts1[0] == 6 && parts1[1] == 0)
-                        {
-                            var x = Date.UTC(parts[2], parts[1]-1, parts[0] - 1);                     
-                            var y = cumrain;
-                            d.push([x,y]);
-                            cumrain = 0;
-                            cumrain = cumrain + Number(array[i][2]);
-                        }
-                        else
-                        {
-                            cumrain = cumrain + Number(array[i][2]);
-                        }
-                    }  
-                }
-                else
-                {
-                    for(var i=length-1-2880;i<length-1;i++)
-                    {
-                        var parts = array[i][0].split('/');
-                        var parts1 = array[i][1].split(':');
-                        if (parts1[0] == 6 && parts1[1] == 0)
-                        {
-                            var x = Date.UTC(parts[2], parts[1]-1, parts[0] - 1);                     
-                            var y = cumrain;
-                            d.push([x,y]);
-                            cumrain = 0;
-                            cumrain = cumrain + Number(array[i][2]);
-                        }
-                        else
-                        {
-                            cumrain = cumrain + Number(array[i][2]);
-                        }
-                    }  
-                }
-
-   
-                var temparray = [];
-                names = ['RainSum'];   
-                for (var i=0;i<1;i++)
-                {
-                    temparray[i] = {
-                        type: 'column',
-                        name: names[i],
-                        data: d
-                    };                
-                }                
-                return temparray; 
-            }
-
-            readTextFile("Files/b1temp.csv");
-            var temp = readlongdata(1);
-            readTextFile("Files/b1moist.csv");
-            var moist = readlongdata(1);  
-            readTextFile("Files/b1rain.csv");
-            var rainsum = readdata(1);  
-
-
-            document.addEventListener('DOMContentLoaded', function () {
-
-
-                function drawchart(id, d, title, subtitle, yaxis)
-                {
-                    var myChart = Highcharts.stockChart(id, {
-                    rangeSelector: {
-                        inputEnabled:false,
-                    buttonTheme: { 
-                            width : 50,
-                            height : 24,       
-                    },   
-                    inputStyle: {
-                        color: '#039',
-                        fontWeight: 'bold',
-                    }, 
-                    inputPosition: {
-                        align: 'center'
-                    },                                                                   
-                    buttons: [{
-                            type: 'week',
-                            count: 1,
-                            text: '1w'
-                        },{
-                            type: 'month',
-                            count: 1,
-                            text: '1m'
-                        },{
-                            type: 'year',
-                            count: 1,
-                            text: '1y'
-                        }, {
-                            type: 'all',
-                            text: 'All'
-                        }],
-                        selected: 1
-                    },
-                    chart: {
-                        zoomType: 'x',
-                        backgroundColor: '#FFFFFF',
-                        shadow: true
-                    },
-                    title: {
-                        text: title,
-                        style: {     
-                            fontWeight: 'bold',      
-                        }
-                    }, 
-                    subtitle: {
-                        text: subtitle,
-                    },                                        
-                    yAxis: {
-                        title: {
-                            text: yaxis,
-                        },                   
-                    },                                     
-                    legend: {
-                        enabled: true,
-                        align: 'right',
-                        verticalAlign: 'top',
-                        layout: 'vertical',
-                        x: 0,
-                        y: 100,
-                        itemStyle: {
-                            color: '#000000',
-                            fontWeight: 'bold',
-                        }
-                    },  
-                    series: d,
-                    exporting: {
-                        
-                        buttons: {
-                            contextButton: {
-                                enabled: false
-                            },
-                            customButton: {
-                                text: 'All Data',
-                                onclick: readnewdata
-                            }
-                        }
-                    },                    
-                    responsive: {
-                        rules: [{
-                            condition: {
-                                maxWidth: 500
-                            },
-                            chartOptions: {
-                                legend: {
-                                    align: 'center',
-                                    verticalAlign: 'bottom',
-                                    layout: 'horizontal'
-                                },
-                                rangeSelector : {
-                                inputEnabled:false
-                                },      
-                                navigator: {
-                                    enabled: false
-                                },                          
-                                yAxis: {
-                                    labels: {
-                                        align: 'left',
-                                        x: 0,
-                                        y: -5
-                                    },
-                                    title: {
-                                        text: null
-                                    }
-                                },
-                                subtitle: {
-                                    text: null
-                                },
-                                credits: {
-                                    enabled: false
-                                },
-                                exporting: {
-                                    enabled: false
-                                }
-                            }
-                        }]
-                    }                                       
-                    });                  
-                    return myChart;
-                } 
-                function readnewdata()
-                {
-                    readTextFile("Files/b1temp.csv");
-                    var temp = readlongdata(0);   
-                    var tempchart = drawchart('temp',temp,'Soil temperature measured 300 mm below the top of the cane row','','Deg C');              
-                }                
-                var rainchart = drawchart('rainsum',rainsum,'RainSum = 24h total 0600 - 0600 (mm)','','RainSum (mm)');  
-                var tempchart = drawchart('temp',temp,'Soil temperature measured 300 mm below the top of the cane row','','Deg C'); 
-                var moistchart = drawchart('moist',moist,'Individual sensor moisture','(first sensor, SM30, is located 300 mm below the top of the cane row) SMI = Soil Moisture Index','SMI');  
-                
-                function drawgauge(id, name, type, unit,value, band1, band2, band3)
-                {
-                    var myChart = Highcharts.chart(id, {
-
-                    chart: {
-                        type: 'gauge',
-                        backgroundColor: '#f0f0f5'
-                    },
-
-                    title: {
-                        text: name
-                    },
-
-                    pane: {
-                        startAngle: -150,
-                        endAngle: 150
-                    },
-
-                    // the value axis
-                    yAxis: {
-                        min: 0,
-                        max: band3,
-                        title: {
-                            text: unit
-                        },
-                        plotBands: [{
-                            from: 0,
-                            to: band1,
-                            color: '#55BF3B' // green
-                        }, {
-                            from: band1,
-                            to: band2,
-                            color: '#DDDF0D' // yellow
-                        }, {
-                            from: band2,
-                            to: band3,
-                            color: '#DF5353' // red
-                        }]
-                    },
-
-                    series: [{
-                        name: type,
-                        data: value,
-                        tooltip: {
-                            valueSuffix: unit
-                        }
-                    }],
-                    exporting: {
-                        enabled: false
-                    }
-                    });				
-                    return myChart;
-                }
-                
-                /*var temps = ['temp1','temp2','temp3','temp4','temp5','temp6','temp7','temp8','temp9'];
-                var moists = ['moist1','moist2','moist3','moist4','moist5','moist6','moist7','moist8','moist9'];
-                var gauge = new Array(8);
-                var gauge1 = new Array(8);*/
-                var value = [];
-                value.push([rainsum[0].data[rainsum[0].data.length-1][1]]);                
-                var raingauge = drawgauge('raincurrent','RainSum Today', 'Rainfall', 'mm', value, 270, 370, 500);
-                /*for (var i=0;i<8;i++)
-                {
-                    var value = [];
-                    value.push([temp[i].data[temp[i].data.length-1][1]]);
-                    gauge[i] = drawgauge(temps[i], namesSMI[i], 'Temperature', 'Deg C', value ,7, 17, 35);
+<html>
+    <head>  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <style>
+        /* Remove the navbar's default margin-bottom and rounded borders */ 
+        .navbar {
+        margin-bottom: 0;
+        border-radius: 0;
+        }
         
-                }
-                for (var i=0;i<8;i++)
-                {
-                    var value = [];
-                    value.push([moist[i].data[moist[i].data.length-1][1]]);
-                    gauge1[i] = drawgauge(moists[i], namesSMI[i], 'SMI', '', value,17, 27, 40);
-                }*/	
-            });         
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+        .row.content {height: 450px}
+        
+        /* Set gray background color and 100% height */
+        .sidenav {
+        padding-top: 20px;
+        background-color: #f1f1f1;
+        height: 100%;
+        }
+        
+        /* Set black background color, white text and some padding */
+        footer {
+        background-color: #555;
+        color: white;
+        padding: 15px;
+        }
+        
+        /* On small screens, set height to 'auto' for sidenav and grid */
+        @media screen and (max-width: 767px) {
+        .sidenav {
+            height: auto;
+            padding: 15px;
+        }
+        .row.content {height:auto;} 
+        }
+    </style>       
+    <style>
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+        width: 100%;
+        }
+
+    }
+
+    .container {
+    background-color: red;
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    }
+    }    
+    </style> 
+        <script src="https://code.highcharts.com/stock/highstock.js"></script>
+        <script src="https://code.highcharts.com/highcharts-more.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+        <script type="text/javascript" src="Files/script.js"></script>
+    </head>
+    
+    <body style="background-color: #f0f0f5;">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>                        
+                    </button>
+                    <a class="navbar-brand" href="#">Logo</a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">BPS1</a></li>
+                        <li><a href="#">BPS2</a></li>
+                        <li><a href="#">BPS3</a></li>
+                        <li><a href="#">BPS4</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid text-center">    
+            <div class="row content">
+                <div class="col-xs-12 col-md-12"> 
+                    <hr>
+                    <p>Soil moisture profile (total moisture profile over the 800 mm monitoring depth, starting at 300 mm below the top of the cane row)</p>                    
+                    <p>SMI = Soil Moisture Index</p> 
+                </div>
+                  
+                <div class="col-xs-12 col-md-10"> 
+                        <div id="rainsum"></div>
+                </div>    
+                <div class="col-xs-12 col-md-2"> 
+                    <div id="raincurrent"></div>
+                </div>                                                                            
+                <div class="col-xs-12 col-md-10"> 
+                    <hr>
+                    <div id="temp"></div>
+                </div>              
+                <div class="col-xs-12 col-md-10"> 
+                    <hr>
+                    <div id="moist"></div>     
+                </div>                  
+            </div>
+        </div>
+      
+    </body>
+</html>
