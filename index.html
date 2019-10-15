@@ -1,110 +1,421 @@
-<html>
-    <head>  
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <style>
-        /* Remove the navbar's default margin-bottom and rounded borders */ 
-        .navbar {
-        margin-bottom: 0;
-        border-radius: 0;
-        }
-        
-        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-        .row.content {height: 450px}
-        
-        /* Set gray background color and 100% height */
-        .sidenav {
-        padding-top: 20px;
-        background-color: #f1f1f1;
-        height: 100%;
-        }
-        
-        /* Set black background color, white text and some padding */
-        footer {
-        background-color: #555;
-        color: white;
-        padding: 15px;
-        }
-        
-        /* On small screens, set height to 'auto' for sidenav and grid */
-        @media screen and (max-width: 767px) {
-        .sidenav {
-            height: auto;
-            padding: 15px;
-        }
-        .row.content {height:auto;} 
-        }
-    </style>       
-    <style>
-    .card {
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-        transition: 0.3s;
-        width: 100%;
-        }
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+   <style>
+    .chartWithOverlay {
+           position: relative;
+           width: 100%;
     }
+    .overlay {
+           width: 200px;
+           height: 200px;
+           position: absolute;
+           top: 60px;   /* chartArea top  */
+           left: 180px; /* chartArea left */
+    }
+   </style>
+   
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    .container {
-    background-color: red;
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%; /* 16:9 Aspect Ratio */
-    }
-    }    
-    </style> 
-        <script src="https://code.highcharts.com/stock/highstock.js"></script>
-        <script src="https://code.highcharts.com/highcharts-more.js"></script>
-        <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
-        <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
-        <script type="text/javascript" src="Files/script.js"></script>
-    </head>
-    
-    <body style="background-color: #f0f0f5;">
-        <nav class="navbar navbar-inverse">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>                        
-                    </button>
-                    <a class="navbar-brand" href="#">Logo</a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">BPS1</a></li>
-                        <li><a href="#">BPS2</a></li>
-                        <li><a href="#">BPS3</a></li>
-                        <li><a href="#">BPS4</a></li>
-                    </ul>
-                </div>
-            </div>
+  <title>Moisture and Rainfall Monitoring</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>	
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/highcharts-more.js"></script>
+
+    <script>
+
+      function initMap() {
+        var myLatLng = {lat: -25.363, lng: 131.044};
+
+        var map = new google.maps.Map(document.getElementById('map_div'), {
+          zoom: 10,
+          center: myLatLng
+        });
+
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+          title: 'Hello World!'
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOiDCqfi-59Y7yqWGcMghL2HrwRYbtn5Y&callback=initMap">
+    </script>	
+   <script type="text/javascript">
+      google.charts.load('current', {'packages':['gauge']});
+      google.charts.setOnLoadCallback(drawChart);
+	  var chartdiv = ['chart_div','chart_div1','chart_div2','chart_div3'];
+	  var textdiv = ['cpu','memory','drive','temperature'];
+      function drawChart() {
+		var data = google.visualization.arrayToDataTable([
+		  ['Label', 'Value'],
+		  ['Memory', 80]]);
+	
+        var options = {
+          redFrom: 90, redTo: 100,
+          yellowFrom:75, yellowTo: 90,
+          minorTicks: 5
+        };
+		
+        for(var i=0;i<4;i++){
+			var chart = new google.visualization.Gauge(document.getElementById(chartdiv[i]));
+			chart.draw(data, options);	
+		};
+			
+		setInterval(function() {
+			for(var i=0;i<4;i++){
+				var temp = 40 + Math.round(60 * Math.random());
+				data.setValue(0, 1, temp);
+				document.getElementById(textdiv[i]).innerHTML = temp;				
+				var chart = new google.visualization.Gauge(document.getElementById(chartdiv[i]));
+				chart.draw(data, options);	
+			};
+		}, 1000);	
+		
+
+      }
+
+		</script> 
+<script>	
+		document.addEventListener('DOMContentLoaded', function () {
+
+			function drawchart(id)
+			{
+				var myChart = Highcharts.chart(id, {
+					chart: {
+						type: 'bar'
+					},
+					title: {
+						text: 'Fruit Consumption'
+					},
+					xAxis: {
+						categories: ['Apples', 'Bananas', 'Oranges']
+					},
+					yAxis: {
+						title: {
+							text: 'Fruit eaten'
+						}
+					},
+					series: [{
+						name: 'Jane',
+						data: [1, 0, 4]
+					}, {
+						name: 'John',
+						data: [5, 7, 3]
+					}]
+				});	
+				return myChart;
+			}
+			
+			function drawgauge(id)
+			{
+				var myChart = Highcharts.chart(id, {
+
+				chart: {
+					type: 'gauge',
+				},
+
+				title: {
+					text: 'Speedometer'
+				},
+
+				pane: {
+					startAngle: -150,
+					endAngle: 150
+				},
+
+				// the value axis
+				yAxis: {
+					min: 0,
+					max: 200,
+					title: {
+						text: 'km/h'
+					},
+					plotBands: [{
+						from: 0,
+						to: 120,
+						color: '#55BF3B' // green
+					}, {
+						from: 120,
+						to: 160,
+						color: '#DDDF0D' // yellow
+					}, {
+						from: 160,
+						to: 200,
+						color: '#DF5353' // red
+					}]
+				},
+
+				series: [{
+					name: 'Speed',
+					data: [80],
+					tooltip: {
+						valueSuffix: ' km/h'
+					}
+				}]
+				});				
+				return myChart;
+			}
+			
+			temps = ['temp1','temp2','temp3','temp4','temp5','temp6','temp7','temp8','temp9'];
+			moists = ['moist1','moist2','moist3','moist4','moist5','moist6','moist7','moist8','moist9'];
+			charts = ['rain','temp','moist'];
+			var gauge = new Array(8);
+			var gauge1 = new Array(8);
+			var chart = new Array(4);
+			var rainsum = drawgauge('rainsum');
+			for (var i=0;i<8;i++)
+			{
+				gauge[i] = drawgauge(temps[i]);
+	
+			}
+			for (var i=0;i<8;i++)
+			{
+				gauge1[i] = drawgauge(moists[i]);
+	
+			}		
+			for (var i=0;i<3;i++)
+			{
+				chart[i] = drawchart(charts[i]);
+	
+			}				
+		});	
+    </script>  
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+		<img src="img/logo.png" alt="HTML5 Icon" width="48" height="48">
+        <div class="sidebar-brand-text mx-3">AgriTech Solutions</div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item active">
+        <a class="nav-link" href="index.html">
+          <i class="fas fa-home"></i>
+          <span>Home</span></a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+  
+      <!-- Nav Item - buttons -->
+      <li class="nav-item">
+        <a class="nav-link" href="buttons.html">
+          <i class="fas fa-fw fa-chart-area"></i>
+          <span>BPS</span></a>
+      </li>
+
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+	
+        <div class="sidebar-brand-text mx-3">Moisture and Rainfall Monitoring </div>
+
+          </ul>
+
         </nav>
-        <div class="container-fluid text-center">    
-            <div class="row content">
-                <div class="col-xs-12 col-md-12"> 
-                    <hr>
-                    <p>Soil moisture profile (total moisture profile over the 800 mm monitoring depth, starting at 300 mm below the top of the cane row)</p>                    
-                    <p>SMI = Soil Moisture Index</p> 
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+
+
+          <!-- Content Row -->
+			<div class="row">
+
+            <!-- CPU Card Example -->
+				<div class="col-xl-9 col-md-6 mb-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
                 </div>
-                  
-                <div class="col-xs-12 col-md-10"> 
-                        <div id="rainsum"></div>
-                </div>    
-                <div class="col-xs-12 col-md-2"> 
-                    <div id="raincurrent"></div>
-                </div>                                                                            
-                <div class="col-xs-12 col-md-10"> 
-                    <hr>
-                    <div id="temp"></div>
-                </div>              
-                <div class="col-xs-12 col-md-10"> 
-                    <hr>
-                    <div id="moist"></div>     
-                </div>                  
+                <div class="card-body">
+					<div id="rain" style="width:100%; height:900px;"></div>				
+                </div>
+              </div>
             </div>
-        </div>
-      
-    </body>
+				<div class="col-xl-3 col-md-6 mb-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                </div>
+                <div class="card-body">
+                       <div class="col-auto">
+							<div id="rainsum" style="min-width: 310px; max-width: 400px; height: 400px; margin: 0 auto"></div>
+						</div>
+                </div>
+              </div>
+            </div>
+				<div class="col-xl-8 col-md-6 mb-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                </div>
+                <div class="card-body">
+					<div id="temp" style="width:100%; height:900px;"></div>				
+                </div>
+              </div>
+            </div>
+				<div class="col-xl-4 col-md-6 mb-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                </div>
+                <div class="card-body">
+				<div class="row no-gutters align-items-center">
+					<div class="col mr-2">
+                      <div id="temp1" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>
+                    <div class="col mr-2">
+                      <div id="temp2" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>					
+                    <div class="col mr-2">
+                      <div id="temp3" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>	
+					<div class="col mr-2">
+                      <div id="temp4" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>
+                    <div class="col mr-2">
+                      <div id="temp5" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>					
+                    <div class="col mr-2">
+                      <div id="temp6" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>	
+					<div class="col mr-2">
+                      <div id="temp7" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>
+                    <div class="col mr-2">
+                      <div id="temp8" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>					
+                    <div class="col mr-2">
+                      <div id="temp9" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>						
+                </div>
+				</div>
+              </div>
+            </div>
+			
+
+							<div class="col-xl-9 col-md-6 mb-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                </div>
+                <div class="card-body">
+					<div id="moist" style="width:100%; height:900px;"></div>				
+                </div>
+              </div>
+            </div>
+				<div class="col-xl-3 col-md-6 mb-4">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                </div>
+                <div class="card-body">
+				<div class="row no-gutters align-items-center">
+					<div class="col mr-2">
+                      <div id="moist1" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>
+                    <div class="col mr-2">
+                      <div id="moist2" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>					
+                    <div class="col mr-2">
+                      <div id="moist3" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>	
+					<div class="col mr-2">
+                      <div id="moist4" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>
+                    <div class="col mr-2">
+                      <div id="moist5" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>					
+                    <div class="col mr-2">
+                      <div id="moist6" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>	
+					<div class="col mr-2">
+                      <div id="moist7" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>
+                    <div class="col mr-2">
+                      <div id="moist8" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>					
+                    <div class="col mr-2">
+                      <div id="moist9" style="width: 280px; height: 280px; margin: 0 auto"></div>
+                    </div>						
+                </div>
+				</div>
+              </div>
+            </div>
+	  </div>
+      <!-- End of Main Content -->
+
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+
+
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+
+</body>
+
 </html>
