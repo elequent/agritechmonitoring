@@ -15,6 +15,7 @@
 
   <!-- Custom styles for this template -->
   <link href="css/simple-sidebar.css" rel="stylesheet">
+<<<<<<< HEAD
     <link href="http://code.google.com//apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css">
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOiDCqfi-59Y7yqWGcMghL2HrwRYbtn5Y&callback=initMap">
@@ -146,6 +147,49 @@
 					marker.draw(data, options);	
 			}, 1000);			
 		};
+=======
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {
+        'packages':['map'],
+        // Note: you will need to get a mapsApiKey for your project.
+        // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+        'mapsApiKey': 'AIzaSyAOiDCqfi-59Y7yqWGcMghL2HrwRYbtn5Y'
+      });
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Lat', 'Long', 'Name'],
+          [-19.561381, 147.093465, 'BPS8'],
+          [-19.574111, 147.187973, 'BPS2'],
+          [-19.589122, 147.288161, 'BPS5'],
+          [-19.669610, 147.097833, 'BPS3'],
+          [-19.733735, 147.181484, 'BPS7'],
+          [-19.696175, 147.375111, 'BPS1'],
+          [-19.843320, 147.193171, 'BPS6'],
+          [-19.838757, 147.254410, 'BPSAWS']		
+        ]);
+
+        var options = {
+          icons: {
+            default: {
+              normal: 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Azure-icon.png',
+              selected: 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Right-Azure-icon.png'
+            }
+          },
+	keepAspectRatio: true, 
+	width: '100%', 
+	height: '100%'
+        };
+
+        var map = new google.visualization.Map(document.getElementById('map_markers_div'));
+        map.draw(data, options);
+	      
+      }
+	$(window).resize(function(){
+	  drawChart();
+	});
+>>>>>>> fc49c79119a07a2e26aca5ff2bdd34909a2a5081
     </script>
 </head>
 
@@ -158,9 +202,15 @@
       <div class="sidebar-heading">AgriTech Solutions</div>
       <div class="list-group list-group-flush">
         <a href="index.html" class="list-group-item list-group-item-action bg-light">Home</a>
+<<<<<<< HEAD
 		<a href="BPS1.html" class="list-group-item list-group-item-action bg-light">BPS1</a>
 		<a href="BPS2.html" class="list-group-item list-group-item-action bg-light">BPS2</a>
 		<a href="BPS3.html" class="list-group-item list-group-item-action bg-light">BPS3</a>
+=======
+	<a href="BPS1.html" class="list-group-item list-group-item-action bg-light">BPS1</a>
+	<a href="BPS2.html" class="list-group-item list-group-item-action bg-light">BPS2</a>
+	<a href="BPS3.html" class="list-group-item list-group-item-action bg-light">BPS3</a>
+>>>>>>> fc49c79119a07a2e26aca5ff2bdd34909a2a5081
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -178,7 +228,11 @@
       </nav>
 
       <div class="container-fluid">
+<<<<<<< HEAD
 		<div id="map_canvas" style="width: 100%; height: 1000px;"></div>
+=======
+	      <div id="map_markers_div"></div>
+>>>>>>> fc49c79119a07a2e26aca5ff2bdd34909a2a5081
       </div>
     </div>
     <!-- /#page-content-wrapper -->
