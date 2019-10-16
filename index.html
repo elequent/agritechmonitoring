@@ -48,8 +48,11 @@
 
         var map = new google.visualization.Map(document.getElementById('map_markers_div'));
         map.draw(data, options);
+	      
       }
-
+	$(window).resize(function(){
+	  drawChart();
+	});
     </script>
 </head>
 
