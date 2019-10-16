@@ -15,10 +15,141 @@
 
   <!-- Custom styles for this template -->
   <link href="css/simple-sidebar.css" rel="stylesheet">
+    <link href="http://code.google.com//apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css">
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOiDCqfi-59Y7yqWGcMghL2HrwRYbtn5Y&callback=initMap">
+    </script>	
+    <script type="text/javascript" src="https://www.google.com/jsapi?.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>	
+    <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+		google.charts.load('current', {'packages':['gauge']});
 
+		function ChartMarker( options ) {
+			this.setValues( options );
+
+			this.$inner = $('<div>').css({
+				position: 'relative',
+				left: '-50%', top: '-50%',
+				width: options.width,
+				height: options.height,
+				fontSize: '1px',
+				lineHeight: '1px',
+				padding: '2px',
+				backgroundColor: 'transparent',
+				cursor: 'default'
+			});
+
+			this.$div = $('<div>')
+					.append( this.$inner )
+					.css({
+						position: 'absolute',
+						display: 'none'
+					});
+		};
+
+
+		ChartMarker.prototype = new google.maps.OverlayView;
+
+		ChartMarker.prototype.onAdd = function() {
+			$( this.getPanes().overlayMouseTarget ).append( this.$div );
+		};
+
+		ChartMarker.prototype.onRemove = function() {
+			this.$div.remove();
+		};
+
+		ChartMarker.prototype.draw = function() {
+			var marker = this;
+			var projection = this.getProjection();
+			var position = projection.fromLatLngToDivPixel( this.get('position') );
+
+			this.$div.css({
+				left: position.x,
+				top: position.y,
+				display: 'block'
+			})
+
+			this.$inner
+				.html( '<img src="' + this.get('image') + '"/>' )
+				.click( function( event ) {
+					var events = marker.get('events');
+					events && events.click( event );
+				});
+
+			this.chart = new google.visualization.Gauge( this.$inner[0] );
+			this.chart.draw( this.get('chartData'), this.get('chartOptions') );
+		};
+
+		function initialize() {
+			
+			var latLng = new google.maps.LatLng(-21.157834, 148.853559);
+			var latLng1 = new google.maps.LatLng(-20.868305, 148.735502);
+			var latLng2 = new google.maps.LatLng(-21.304811, 149.155639);
+			var latLng3 = new google.maps.LatLng(-21.194758, 149.002732);
+
+			var map = new google.maps.Map( document.getElementById("map_canvas"), {
+				zoom: 10,
+				center: latLng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			});
+
+			var data = google.visualization.arrayToDataTable([
+			  ['Label', 'Value'],
+			  ['Memory', 80]]);
+
+			var options = {
+			  redFrom: 90, redTo: 100,
+			  yellowFrom:75, yellowTo: 90,
+			  minorTicks: 5
+			};
+
+			var marker = new ChartMarker({
+				map: map,
+				position: latLng1,
+				width: '100px',
+				height: '100px',
+				chartData: data,
+				chartOptions: options,
+			});
+			var marker1 = new ChartMarker({
+				map: map,
+				position: latLng2,
+				width: '100px',
+				height: '100px',
+				chartData: data,
+				chartOptions: options,
+			});
+			var marker2 = new ChartMarker({
+				map: map,
+				position: latLng3,
+				width: '100px',
+				height: '100px',
+				chartData: data,
+				chartOptions: options,
+			});		
+
+				
+			setInterval(function() {
+					var temp = 40 + Math.round(60 * Math.random());
+					data.setValue(0, 1, temp);
+					marker1.draw(data, options);	
+			}, 1000);
+			setInterval(function() {
+					var temp = 40 + Math.round(60 * Math.random());
+					data.setValue(0, 1, temp);
+					marker2.draw(data, options);	
+			}, 1000);
+			setInterval(function() {
+					var temp = 40 + Math.round(60 * Math.random());
+					data.setValue(0, 1, temp);
+					marker.draw(data, options);	
+			}, 1000);			
+		};
+    </script>
 </head>
 
-<body>
+<body onload="initialize()">
 
   <div class="d-flex" id="wrapper">
 
@@ -26,10 +157,10 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading">AgriTech Solutions</div>
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action bg-light">Home</a>
-		<a href="#" class="list-group-item list-group-item-action bg-light">BPS1</a>
-		<a href="#" class="list-group-item list-group-item-action bg-light">BPS2</a>
-		<a href="#" class="list-group-item list-group-item-action bg-light">BPS3</a>
+        <a href="index.html" class="list-group-item list-group-item-action bg-light">Home</a>
+		<a href="BPS1.html" class="list-group-item list-group-item-action bg-light">BPS1</a>
+		<a href="BPS2.html" class="list-group-item list-group-item-action bg-light">BPS2</a>
+		<a href="BPS3.html" class="list-group-item list-group-item-action bg-light">BPS3</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -47,9 +178,7 @@
       </nav>
 
       <div class="container-fluid">
-        <h1 class="mt-4">Simple Sidebar</h1>
-        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
+		<div id="map_canvas" style="width: 100%; height: 1000px;"></div>
       </div>
     </div>
     <!-- /#page-content-wrapper -->
