@@ -15,7 +15,38 @@
 
   <!-- Custom styles for this template -->
   <link href="css/simple-sidebar.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {
+        'packages':['map'],
+        // Note: you will need to get a mapsApiKey for your project.
+        // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+        'mapsApiKey': 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'
+      });
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Lat', 'Long', 'Name'],
+          [37.4232, -122.0853, 'Work'],
+          [37.4289, -122.1697, 'University'],
+          [37.6153, -122.3900, 'Airport'],
+          [37.4422, -122.1731, 'Shopping']
+        ]);
 
+        var options = {
+          icons: {
+            default: {
+              normal: 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Azure-icon.png',
+              selected: 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Right-Azure-icon.png'
+            }
+          }
+        };
+
+        var map = new google.visualization.Map(document.getElementById('map_markers_div'));
+        map.draw(data, options);
+      }
+
+    </script>
 </head>
 
 <body>
@@ -47,9 +78,7 @@
       </nav>
 
       <div class="container-fluid">
-        <h1 class="mt-4">Home</h1>
-        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
+	      <div id="map_markers_div" style="width: 400px; height: 300px"></div>
       </div>
     </div>
     <!-- /#page-content-wrapper -->
